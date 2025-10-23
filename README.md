@@ -1,68 +1,285 @@
-# CodeIgniter 4 Application Starter
+# 🧾 HRIS Attendance (CodeIgniter 4)
 
-## What is CodeIgniter?
+Aplikasi backend **GED System Attandece (API + Admin)** menggunakan **CodeIgniter 4**, **PHP 8.2**, **MySQL 8**, dan **Tailwind/Vue.js** untuk antarmuka admin.  
+Sistem ini dirancang untuk mencatat kehadiran karyawan dengan **selfie dan lokasi GPS**, mengatur **jadwal shift**, serta mengelola **cuti, izin, lembur, dan persetujuan HRD/supervisor**.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+---
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## 📦 1. Prasyarat Server
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+### Sistem & Software
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- **OS**: Ubuntu 22.04+ (atau setara)
+- **Web Server**: Apache 2.4 dengan modul `mod_rewrite` aktif
+- **PHP**: Versi 8.2.x dengan ekstensi:
+  - `intl`, `mbstring`, `pdo_mysql`, `openssl`, `json`, `curl`, `gd`, `fileinfo`, `exif`
+- **Database**: MySQL 8.x
+- **Node.js**: 18+ (untuk build aset admin web)
+- **Composer**: 2.x
 
-## Installation & updates
+> 💡 Rekomendasi pengaturan `php.ini`:
+>
+> ```ini
+> date.timezone = Asia/Jakarta
+> memory_limit = 256M
+> post_max_size = 32M
+> upload_max_filesize = 16M
+> max_execution_time = 60
+> display_errors = Off
+> log_errors = On
+> error_log = /var/log/php_errors.log
+> ```
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+---
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## 🧱 2. Persiapan Database
 
-## Setup
+Masuk ke MySQL dan buat database serta user khusus:
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+```sql
+CREATE DATABASE dbname CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'username'@'%' IDENTIFIED BY 'ganti_password_kuat';
+GRANT ALL PRIVILEGES ON hris_attendance.* TO 'username'@'%';
+FLUSH PRIVILEGES;
+```
 
-## Important Change with index.php
+> ⚠️ Gunakan password yang kuat untuk user database produksi.
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+---
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+## ⚙️ 3. Instalasi Lokal (Development Setup)
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### Clone Repository
 
-## Repository Management
+```bash
+cd C:\laragon\www
+git clone https://github.com/itged/absensiv2.git absensiv2
+cd absensiv2
+```
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+### Install Dependensi
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+```bash
+# Backend
+composer install
 
-## Server Requirements
+# Frontend (Admin Web)
+npm install
+```
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+> Jika hanya menggunakan API untuk Flutter, langkah `npm install` bisa dilewati.
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+---
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+### Konfigurasi Environment
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+Salin file `.env` contoh:
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+```bash
+cp env .env
+```
+
+Lalu ubah konfigurasi sesuai kebutuhan:
+
+```dotenv
+app.baseURL = 'url_app'
+app.environment = development
+
+database.default.hostname = 127.0.0.1
+database.default.database =
+database.default.username =
+database.default.password =
+
+jwt.secret = 'ubah_dengan_secret_acak_panjang'
+jwt.ttl = 86400
+app.defaultLocale = 'id'
+```
+
+> 🔑 Gunakan secret JWT acak dan panjang untuk keamanan token.
+
+---
+
+### Migrasi & Seeder Database
+
+```bash
+php spark migrate
+php spark db:seed DevSeed
+```
+
+Seeder akan membuat data awal seperti akun admin dan konfigurasi shift.
+
+---
+
+### Jalankan Server Lokal
+
+Gunakan CodeIgniter built-in server:
+
+```bash
+php spark serve
+```
+
+Akses di browser:  
+👉 [http://localhost:8080](http://localhost:8080)
+
+Atau jika menggunakan Laragon (direkomendasikan):
+
+1. Buka Laragon → Menu → _www → Create Virtual Host_
+2. Masukkan nama domain: `testing.test`
+3. Restart Apache
+4. Akses di browser: [http://testing.test](http://testing.test)
+
+---
+
+### Build Frontend (Admin Panel)
+
+Untuk menampilkan dashboard HRD:
+
+```bash
+npm run build
+```
+
+Output akan muncul di `public/build/`.
+
+---
+
+## 👤 Akun Default
+
+| Role      | Email                | Password    |
+| --------- | -------------------- | ----------- |
+| Admin HRD | `admin@company.test` | `Admin@123` |
+
+---
+
+## 🧩 Struktur Folder Proyek
+
+```
+hris-attendance/
+├── app/                 # Source utama CodeIgniter
+│   ├── Controllers/     # API & Web controllers
+│   ├── Models/          # Model database
+│   ├── Views/           # Template / Vue entry point
+│   └── Filters/         # Middleware (JWT & Role)
+├── public/              # Root publik (DocumentRoot Apache)
+├── writable/            # Uploads, logs, cache, session
+├── migrations/          # Struktur tabel database
+├── vendor/              # Dependensi PHP
+├── package.json         # Dependensi frontend
+├── composer.json        # Dependensi backend
+├── .env                 # Konfigurasi environment
+└── README.md            # Panduan ini
+```
+
+---
+
+## ☁️ 4. Deployment ke Server Produksi
+
+### Upload Source Code
+
+```bash
+cd /var/www
+git clone https://github.com/itged/absensiv2.git
+cd absensiv2
+```
+
+### Install Dependensi Produksi
+
+```bash
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build
+```
+
+### Konfigurasi `.env` Produksi
+
+```dotenv
+app.baseURL = 'https://app_url'
+app.environment = production
+app.forceGlobalSecureRequests = true
+
+database.default.hostname =
+database.default.database =
+database.default.username =
+database.default.password = ganti_password_kuat
+
+jwt.secret = 'secret_produksi_acak_panjang'
+jwt.ttl = 86400
+```
+
+### Atur Permission Folder
+
+```bash
+sudo chown -R www-data:www-data writable
+sudo chmod -R 775 writable
+```
+
+### Migrasi Database
+
+```bash
+php spark migrate --all
+```
+
+---
+
+## 🌐 5. Konfigurasi Apache VirtualHost
+
+Buat file konfigurasi baru:
+
+```bash
+sudo nano /etc/apache2/sites-available/absensiv2.conf
+```
+
+Isi dengan konfigurasi vhost
+
+Aktifkan site dan restart Apache:
+
+```bash
+sudo a2enmod rewrite
+sudo a2ensite hris-attendance.conf
+sudo systemctl reload apache2
+```
+
+---
+
+## 🔒 6. Aktifkan HTTPS (SSL)
+
+Gunakan Let’s Encrypt untuk sertifikat SSL gratis:
+
+```bash
+sudo apt install certbot python3-certbot-apache -y
+sudo certbot --apache -d hris.example.com
+```
+
+---
+
+## 🕒 7. Cron Job Otomatis (Opsional)
+
+Untuk menutup absensi otomatis setiap hari pukul 23:00:
+
+```
+0 23 * * * cd /var/www/hris-attendance && /usr/bin/php spark attendance:close-day >> /var/log/attendance_cron.log 2>&1
+```
+
+---
+
+## 🧠 8. Tips Developer
+
+- Gunakan **VSCode** dengan ekstensi:
+  - PHP Intelephense
+  - Tailwind CSS IntelliSense
+  - Vetur (Vue)
+- Gunakan timezone `Asia/Jakarta`
+- Jalankan `php spark routes` untuk melihat semua route aktif
+- Gunakan `php spark clear-cache` setelah mengubah konfigurasi
+
+---
+
+## 🧑‍💻 Pengembang
+
+| Nama        | Peran                         |
+| ----------- | ----------------------------- |
+| **@IT GED** | Backend Developer             |
+| IT DEV GED  | Integrasi Flutter & Admin Web |
+
+---
+
+📅 **Terakhir diperbarui:** Oktober 2025  
+© 2025 GED Lintas Indonesia — All Rights Reserved.
