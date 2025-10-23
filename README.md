@@ -239,24 +239,7 @@ sudo systemctl reload apache2
 
 ---
 
-## 🔒 6. Aktifkan HTTPS (SSL)
-
-Gunakan Let’s Encrypt untuk sertifikat SSL gratis:
-
-```bash
-sudo apt install certbot python3-certbot-apache -y
-sudo certbot --apache -d hris.example.com
-```
-
 ---
-
-## 🕒 7. Cron Job Otomatis (Opsional)
-
-Untuk menutup absensi otomatis setiap hari pukul 23:00:
-
-```
-0 23 * * * cd /var/www/hris-attendance && /usr/bin/php spark attendance:close-day >> /var/log/attendance_cron.log 2>&1
-```
 
 ---
 
@@ -274,10 +257,9 @@ Untuk menutup absensi otomatis setiap hari pukul 23:00:
 
 ## 🧑‍💻 Pengembang
 
-| Nama        | Peran                         |
-| ----------- | ----------------------------- |
-| **@IT GED** | Backend Developer             |
-| IT DEV GED  | Integrasi Flutter & Admin Web |
+| Nama       | Peran |
+| ---------- | ----- |
+| IT DEV GED |       |
 
 ---
 

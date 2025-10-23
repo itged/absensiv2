@@ -1,0 +1,64 @@
+# === OS / Editor ===
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.orig
+
+# IDE
+/.idea/
+/.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# === PHP / Composer ===
+/vendor/
+.phpunit.result.cache
+/coverage/
+
+# Logs
+*.log
+logs/
+storage/logs/
+
+# === Node / Frontend build ===
+/node_modules/
+/dist/
+/public/build/
+/public/assets/
+/public/hot
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === CodeIgniter 4 specifics ===
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Writable directory (keep placeholder files only)
+writable/*
+!writable/index.html
+!writable/.gitkeep
+
+# Writable subfolders: ignore contents but keep index.html
+writable/cache/*
+!writable/cache/index.html
+writable/logs/*
+!writable/logs/index.html
+writable/session/*
+!writable/session/index.html
+writable/uploads/*
+!writable/uploads/.gitkeep
+!writable/uploads/index.html
+
+# Backups / dumps
+/backups/
+/*.sql
+*.tar
+*.zip
+
+# Misc
+.sass-cache/
+.turbo/
