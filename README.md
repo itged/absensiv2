@@ -1,10 +1,3 @@
-# 🧾 HRIS Attendance (CodeIgniter 4)
-
-Aplikasi backend **GED System Attandece (API + Admin)** menggunakan **CodeIgniter 4**, **PHP 8.2**, **MySQL 8**, dan **Tailwind/Vue.js** untuk antarmuka admin.  
-Sistem ini dirancang untuk mencatat kehadiran karyawan dengan **selfie dan lokasi GPS**, mengatur **jadwal shift**, serta mengelola **cuti, izin, lembur, dan persetujuan HRD/supervisor**.
-
----
-
 ## 📦 1. Prasyarat Server
 
 ### Sistem & Software
